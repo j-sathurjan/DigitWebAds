@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-vp_r^y@1fqp#jx%k9&4$b!qfdtf!bm_5x26*^if*vsh1o&*(8x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,7 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'AdsPrediction.apps.AdspredictionConfig',
     'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'djoser',
+    'rest_framework.authtoken',
+    
 ]
 
 MIDDLEWARE = [
@@ -129,12 +134,32 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.MultiPartRenderer',
+        'rest_framework.renderers.TemplateHTMLRenderer',
     ],
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.FormParser',
         'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.JSONParser',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+        # 'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES':[
+        'rest_framework.permissions.AllowAny',
+    ]
+}
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    # "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ROTATE_REFRESH_TOKENS": False,
 }
